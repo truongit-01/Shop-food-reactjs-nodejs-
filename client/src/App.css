@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.link {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+.link:hover {
+    color: #fff;
+}
+
+/* nav */
+.toolbar__navigation {
+    display: flex;
+    margin-top: 14px;
+}
+
+.toolbar__navigation li {
+    list-style: none;
+    margin-left: 20px;
+    min-width: 50px;
+}
+
+
+/* LOGIN/ Regis PAGE */  /* Date create : 10/13/2022, creator: Truong */
+.body_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 695px;
+    padding: 10px;
+    background: url("https://d2och25llwfr54.cloudfront.net/wp-content/uploads/2020/02/32.jpg") center;
+}
+.wrap_form {
+    max-width: 450px;
+    width: 100%;
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgb(0 0 0 / 15%);
+    margin: auto;
+  }
+.wrap_form .title{
+    font-size: 25px;
+    font-weight: 500;
+    position: relative;
+}
+.wrap_form .title {
+      text-align: center;
+}
+.content form .user-details{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0 12px 0;
+}
+form .user-details .input-box{
+    margin-bottom: 15px;
+    width: calc(100%);
+  }
+form .input-box span.details{
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+.user-details .input-box input{
+    height: 45px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border: 1px solid #ccc;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+}
+.user-details .input-box input:focus,
+.user-details .input-box input:valid{
+    /* border-color: #90C43C; */
+}
+   
+form .button{
+    height: 45px;
+    margin: 0px 0 35px
+}
+form .button input{
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #BF014B;
+}
+form .button input:hover{
+    /* transform: scale(0.99); */
+    background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+  
+@media(max-width: 584px) {
+   .wrap_form{
+    max-width: 100%;
+}
+form .user-details .input-box{
+    margin-bottom: 15px;
+    width: 100%;
+}
+form .category{
+    width: 100%;
+}
+}
+@media(max-width: 459px) {
+    .wrap_form .content .category{
+    flex-direction: column;
+}
+}
+
+/* responsive */
+/* Mobile: width < 740px */
+@media only screen and (max-width: 46.1875em) {
+    
+}
+
+
+
+/* Tablet: width >= 740px and width < 1024px */
+@media only screen and (min-width: 46.25em) and (max-width: 63.9375em) {
+   
+}
+
+/* Cả Mobile & tablet: width < 1024px */
+@media only screen and (max-width: 63.9375em) {
+}
