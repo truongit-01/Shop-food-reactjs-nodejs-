@@ -3,8 +3,8 @@ const db = require("./configs/Database.js");
 const configViewEngine = require('./configs/viewsEngine'); // sử dụng configviewEngine
 require('dotenv').config(); // sử dụng dotenv
 const cookieParser = require("cookie-parser");
-// const { Users } = require("./models/UserModel");
-
+const { Users } = require("./models/UserModel");
+const { Foods, CategoryFood } = require("./models/ProductFoodModel");
 
 const app = express(); // khởi tạo app từ express
 const port = process.env.PORT; // sử dụng PORT ở file .env
@@ -14,14 +14,17 @@ app.use(cors()) // Use thư viện cors để có thể gọi api từ bên fron
 
 /*  */
 const initApiUser = require("./routes/UserRoutes");
+const initApiProductFood = require("./routes/ProductFoodRoutes");
 
 /// kết nối DB
 async function connectDB() {
     try {
         await db.authenticate();
         console.log("connect Db thành công!");
-
-        // await Users.sync(); /* query create model */
+        
+        await Users.sync(); /* query create model */
+        await CategoryFood.sync(); /* query create model */
+        await Foods.sync(); /* query create model */
     } catch (error) {
         console.error("có lỗi", error)
     }
@@ -33,7 +36,8 @@ app.use(cookieParser()); //
 configViewEngine(app); // set up view engine (chính là express)
 
 /* router */
-initApiUser(app)
+initApiUser(app);
+initApiProductFood(app);
 
 
 
