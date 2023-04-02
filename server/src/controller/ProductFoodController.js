@@ -93,25 +93,49 @@ const getCateProduct = (req, res) => {
 
 
 /* Tạo và thêm thức ăn vào danh mục */
-const postAddFoodCate = (req, res) => {
+const postAddFoodCate = async (req, res) => {
     const infoFood = req.body;
+    const typeCate = req.query.type;
 
-    CategoryFood.findOne({ where: { cateName: 'Nem' } }).then(category => {
-        Foods.create({
-            FoodName: infoFood.FoodName,
-            description: infoFood.description,
-            cateId: category.categoryId,
-            price: infoFood.price,
-            quantity: infoFood.quantity
-        }).then(food => {
-            console.log(food);
-        }).catch(err => {
-            console.error('Unable to create food:', err);
-        });
-    }).catch(err => {
-        console.error('Unable to find category:', err);
+    const findCateFood = await CategoryFood.findOne({
+        where: { cateName: `${typeCate}` }
     });
 
+    if (findCateFood) {
+        try {
+            const newFood = await Foods.create({
+                FoodName: infoFood.FoodName,
+                description: infoFood.description,
+                cateId: findCateFood.categoryId,
+                price: infoFood.price,
+                quantity: infoFood.quantity
+            });
+
+            res.json({ newFood })
+        } catch (error) {
+            console.log(error)
+        }
+
+    } else {
+        res.json({
+            message: 'Không tìm thấy Category của loại thức ăn này!'
+        })
+    }
+    // CategoryFood.findOne({ where: { cateName: `${typeCate}` } }).then(category => {
+    //     Foods.create({
+    //         FoodName: infoFood.FoodName,
+    //         description: infoFood.description,
+    //         cateId: category.categoryId,
+    //         price: infoFood.price,
+    //         quantity: infoFood.quantity
+    //     }).then(food => {
+    //         console.log(food);
+    //     }).catch(err => {
+    //         console.error('Unable to create food:', err);
+    //     });
+    // }).catch(err => {
+    //     console.error('Unable to find category:', err);
+    // });
 }
 
 
@@ -152,6 +176,31 @@ const getAllCateFood = async (req, res) => {
     }
 }
 
+/* hàm này  sẽ trả về true or false nếu nó thành công hoặc là thất bại */
+async function checkCreateUploadsFolder(uploadFolder) {
+    try {
+        await fs.statAsync(uploadFolder)
+    } catch (error) {
+        if (error && error.code == 'ENOENT') {
+            try {
+                await fs.mkdirAsync(uploadFolder);
+            } catch (error) {
+                console.error('Lỗi tạo folder upload')
+                return false;
+            }
+        } else {
+            console.log('Lỗi đọc folder upload');
+            return false
+        }
+    }
+    return true;
+}
+
+/* post ảnh food */
+const postImageFood = async (req, res) => {
+
+}
+
 module.exports = {
     getProductFood,
     getProductFoodByID,
@@ -159,5 +208,6 @@ module.exports = {
     postCateProduct,
     postAddFoodCate,
     getAllCateFood,
-    getCateProduct
+    getCateProduct,
+    postImageFood
 }

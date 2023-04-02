@@ -1,5 +1,8 @@
 const express = require('express');
 const ProductController = require('../controller/ProductFoodController');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 let router = express.Router();
 
@@ -17,6 +20,10 @@ const initProductFood = (app) => {
     router.get('/category/food/list', ProductController.getAllCateFood);
     // Tạo thức ăn và thêm 1 món ăn mới vào danh mục
     router.post('/product/food/cate-add', ProductController.postAddFoodCate);
+
+
+    // 
+    router.post('/upload_images', ProductController.postImageFood)
 
     return app.use('/api/v1/', router);
 }

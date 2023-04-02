@@ -1,58 +1,41 @@
 const { Users } = require('../models/UserModel');
+const db = require('../models/index')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// get user (admin)
-let getUsers = async (req, res) => {
-    try {
-        const users = await Users.findAll({
-            attributes: ['id', 'name', 'email']
-        });
-        res.json(users);
-    } catch (error) {
-        console.log("err", error)
-    }
-}
 
-/* User register */
-const postRegister = async (req, res) => {
-    console.log("ok")
-    const { name, email, password, comfirmPass, sex, numberPhone, national } = req.body;
-    console.log('name:', name, 'password:', password, 'comfirmPass:', comfirmPass, 'sex', sex, 'numberPhone', numberPhone, 'national', national)
-    if (password !== comfirmPass) return res.status(400).json({ msg: "Password và comfirm Password không khớp!" });
+
+/*  create User (admin) */
+const postCreateUser = async (req, res) => {
+    const { name, email, password, comfirmPass, role_id } = req.body;
+    if (!name || !email || !password || !comfirmPass || !role_id) {
+        return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin!" });
+    }
+
+    if (password !== comfirmPass) return res.status(400).json({ message: "Mật khẩu và nhập lại Password không khớp!" });
 
     /* check email and phoneNumber exists */
-    const userExists = await Users.findOne({
+    const userExists = await db.users.findOne({
         where: {
             email: email,
         },
     });
-    const phoneExists = await Users.findOne({
-        where: {
-            numberPhone: numberPhone,
-        },
-    });
-
 
     if (userExists) {
-        return res.status(400).json({ msg: "Email đã tồn tại!" });
-    } else if (phoneExists) {
-        return res.status(400).json({ msg: "Số điện thoai này đã được đăng ký!" });
+        return res.status(400).json({ message: "Email này đã được sử dụng!" });
     } else {
         /* create user */
         const salt = await bcrypt.genSalt();
         const hashPassword = await bcrypt.hash(password, salt);
         try {
-            await Users.create({
+            await db.users.create({
                 name: name,
                 email: email,
                 password: hashPassword,
-                sex: sex,
-                numberPhone: numberPhone,
-                national: national,
+                role_id: role_id,
             });
 
-            res.json({ msg: "Register thành công!" })
+            res.json({ message: "Tạo tài khoản thành công!" })
         } catch (error) {
             console.log("err", error);
         }
@@ -64,13 +47,13 @@ const postLogin = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email) {
-        return res.status(400).json({ success: false, message: "User must have name!" });
+        return res.status(400).json({ success: false, message: "Vui lòng nhập email!" });
     } else if (!password) {
-        return res.status(400).json({ success: false, message: "Product must have Password!" });
+        return res.status(400).json({ success: false, message: "Vui lòng nhập mật khẩu!" });
     }
 
     try {
-        const user = await Users.findOne({
+        const user = await db.users.findOne({
             where: {
                 email: email,
             }
@@ -78,7 +61,7 @@ const postLogin = async (req, res) => {
 
         /* check password */
         const match = await bcrypt.compare(password, user.password);
-        if (!match) return res.status(400).json({ msg: "password ko đúng!" });
+        if (!match) return res.status(400).json({ message: "password ko đúng!" });
 
         /* Generate an access token */
         const userId = user.id;
@@ -88,7 +71,7 @@ const postLogin = async (req, res) => {
 
         /* mã hoá dữ liệu bằng jwt */
         const accessToken = jwt.sign({ id: userId, isAdmin: isAdmin }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '1m' /* 15m */
+            expiresIn: '30m' /* 15m */
         });
 
         /*  */
@@ -98,14 +81,98 @@ const postLogin = async (req, res) => {
             email: Email,
             isAdmin: isAdmin,
             name: name,
-            accessToken
+            accessToken,
         })
 
     } catch (error) {
         console.log(error)
-        res.status(404).json({ msg: "email ko đúng!" });
+        res.status(404).json({ message: "email ko đúng!" });
     }
 }
+
+
+// get user (admin)
+let getUsers = async (req, res) => {
+    const IdQuery = req.query.id;
+
+    try {
+        let user = null;
+        if (IdQuery === 'ALL') {
+            user = await db.users.findAll({
+                attributes: ['user_id', 'name', 'email']
+            });
+            res.json(user);
+        } else {
+            user = await db.users.findByPk(id, {
+                include: [
+                    {
+                        model: db.userDetails,
+                        attributes: [
+                            "full_name",
+                        ],
+                        as: "userDetails",
+                    },
+                ],
+                raw: true,
+                nest: true,
+            });
+        }
+
+        if (!user) {
+            res.status(404).json({ message: "Không tìm thất user!" });
+        } else {
+            if (user) delete user.password;
+            res.status(200).json({
+                code: 0,
+                message: "Get user completed",
+                data: user,
+            });
+        }
+
+    } catch (error) {
+        console.log("Lỗi server", error);
+        res.status(500).json({ message: "Server error" });
+    };
+}
+
+
+/* User register */
+const postRegister = async (req, res) => {
+    const { name, email, password, comfirmPass } = req.body;
+    if (!name || !email || !password || !comfirmPass) {
+        return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin!" });
+    }
+
+    if (password !== comfirmPass) return res.status(400).json({ msg: "Password và comfirm Password không khớp!" });
+
+    /* check email and phoneNumber exists */
+    const userExists = await db.users.findOne({
+        where: {
+            email: email,
+        },
+    });
+
+    if (userExists) {
+        return res.status(400).json({ msg: "Email đã tồn tại!" });
+    } else {
+        /* create user */
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(password, salt);
+        try {
+            await db.users.create({
+                name: name,
+                email: email,
+                password: hashPassword,
+                role_id: 2
+            });
+
+            return res.json({ msg: "Register thành công!" })
+        } catch (error) {
+            console.log("err", error);
+        }
+    }
+}
+
 
 const deleteUserById = async (req, res) => {
     const paramIdUser = req.params.userId
@@ -162,10 +229,11 @@ const Logout = async (req, res) => {
 }
 
 module.exports = {
+    postCreateUser,
     getUsers,
     postRegister,
     postLogin,
     deleteUserById,
     getUsersAdmin,
-    Logout
+    Logout,
 }
