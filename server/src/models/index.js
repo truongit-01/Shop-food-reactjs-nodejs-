@@ -9,7 +9,7 @@ db.sequelize = sequelize
 
 db.users = require('./UserModel')(sequelize, DataTypes)
 db.roles = require('./RoleModel')(sequelize, DataTypes)
-db.userDetails = require('./UserDetailModel')(sequelize, DataTypes)
+db.user_details = require('./UserDetailModel')(sequelize, DataTypes)
 
 db.sequelize.sync({ force: false })
 
@@ -17,22 +17,23 @@ db.sequelize.sync({ force: false })
 // Relation User
 db.roles.hasMany(db.users, {
     foreignKey: 'role_id',
-    as: 'users'
+    as: 'user'
 });
 
 db.users.belongsTo(db.roles, {
     foreignKey: 'role_id',
-    as: 'roles'
+    as: 'role'
 });
 
-db.users.hasOne(db.userDetails, {
+db.users.hasOne(db.user_details, {
     foreignKey: 'user_id',
-    as: 'users'
+    as: 'user_detail',
+    onDelete: 'cascade',
 });
 
-db.userDetails.belongsTo(db.users, {
+db.user_details.belongsTo(db.users, {
     foreignKey: 'user_id',
-    as: 'userDetails'
+    as: 'user_detail'
 });
 
 

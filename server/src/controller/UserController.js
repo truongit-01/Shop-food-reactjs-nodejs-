@@ -2,6 +2,7 @@ const { Users } = require('../models/UserModel');
 const db = require('../models/index')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const generateToken = require('../utils/generateToken')
 
 
 
@@ -53,64 +54,67 @@ const postLogin = async (req, res) => {
     }
 
     try {
+        let userLogin = {};
         const user = await db.users.findOne({
             where: {
                 email: email,
             }
         });
 
-        /* check password */
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) return res.status(400).json({ message: "password ko đúng!" });
+        if (user) {
+            /* check password */
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                userLogin = {
+                    name: user.name,
+                    email: user.email0
+                }
+                /* generate token with info role_id */
+                const accessToken = await generateToken.generateToken(user);
+                userLogin.token = accessToken
+                // console.log(user)
+            } else {
+                return res.status(400).json({ message: "password ko đúng!" });
+            }
 
-        /* Generate an access token */
-        const userId = user.id;
-        const isAdmin = user.isAdmin;
-        const Email = user.email;
-        const name = user.name;
+            return res.status(200).json({ data: userLogin, code: 0, message: "Đăng nhập thành công!" });
 
-        /* mã hoá dữ liệu bằng jwt */
-        const accessToken = jwt.sign({ id: userId, isAdmin: isAdmin }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '30m' /* 15m */
-        });
-
-        /*  */
-        const refreshToken = jwt.sign({ id: userId, isAdmin: isAdmin }, process.env.REFRESH_TOKEN_SECRET);
-
-        res.json({
-            email: Email,
-            isAdmin: isAdmin,
-            name: name,
-            accessToken,
-        })
+        } else {
+            return res.status(400).json({ message: "Tài khoản không tồn tại trên hệ thống!" });
+        }
 
     } catch (error) {
         console.log(error)
-        res.status(404).json({ message: "email ko đúng!" });
+        res.status(500).json({ message: "Lỗi server!" });
     }
 }
 
 
 // get user (admin)
 let getUsers = async (req, res) => {
-    const IdQuery = req.query.id;
+    const idQuery = req.query.id;
+    let Alluser = null;
+    let user = null;
 
     try {
-        let user = null;
-        if (IdQuery === 'ALL') {
-            user = await db.users.findAll({
+        if (idQuery === 'ALL') {
+            Alluser = await db.users.findAll({
                 attributes: ['user_id', 'name', 'email']
             });
-            res.json(user);
+
         } else {
-            user = await db.users.findByPk(id, {
+            user = await db.users.findByPk(idQuery, {
                 include: [
                     {
-                        model: db.userDetails,
+                        model: db.user_details,
                         attributes: [
-                            "full_name",
+                            "phone_number",
+                            "gender",
+                            "address",
+                            "avatar",
+                            "national",
                         ],
-                        as: "userDetails",
+                        as: "user_detail",
                     },
                 ],
                 raw: true,
@@ -118,21 +122,26 @@ let getUsers = async (req, res) => {
             });
         }
 
-        if (!user) {
-            res.status(404).json({ message: "Không tìm thất user!" });
-        } else {
-            if (user) delete user.password;
+        if (Alluser) {
+            res.status(200).json({
+                code: 0,
+                message: "Get all users completed",
+                data: Alluser
+            });
+        } else if (user) {
+            delete user.password;
             res.status(200).json({
                 code: 0,
                 message: "Get user completed",
                 data: user,
             });
+        } else {
+            res.status(404).json({ message: "User not found" });
         }
 
     } catch (error) {
-        console.log("Lỗi server", error);
-        res.status(500).json({ message: "Server error" });
-    };
+        console.log("Lỗi server:", error)
+    }
 }
 
 
@@ -175,18 +184,43 @@ const postRegister = async (req, res) => {
 
 
 const deleteUserById = async (req, res) => {
-    const paramIdUser = req.params.userId
+    const paramIdUser = req.params.userId;
 
-    if (req.user.id == req.params.userId || req.user.isAdmin) {
-        const userDetete = await Users.destroy({
-            where: {
-                id: paramIdUser
+    try {
+        if (!paramIdUser) {
+            return res.status(404).json({
+                message: "Server chưa nhận được prams id user"
+            });
+        } else {
+            const user = await db.users.findByPk(paramIdUser);
+
+            if (user) {
+                await user.destroy();
+
+                return res.status(200).json({
+                    message: 'Xoá user thành công!'
+                })
+            } else {
+                return res.status(404).json({
+                    message: 'Không tìm thấy user!'
+                })
             }
-        });
-        res.status(200).json("User has been deleted.");
-    } else {
-        res.status(403).json("You are not allowed to delete this user! ");
+        }
+
+    } catch (error) {
+
     }
+
+    // if (req.user.id == req.params.userId || req.user.isAdmin) {
+    //     const userDetete = await db.users.destroy({
+    //         where: {
+    //             id: paramIdUser
+    //         }
+    //     });
+    //     res.status(200).json("User has been deleted.");
+    // } else {
+    //     res.status(403).json("You are not allowed to delete this user! ");
+    // }
 }
 
 const getUsersAdmin = async (req, res) => {

@@ -1,37 +1,48 @@
 const jwt = require("jsonwebtoken");
+const db = require("../models/index")
 
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-
-    if (authHeader) {
-        const token = authHeader.split(" ")[1];
-
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            // console.log("user", user)
-            if (err) {
-                return res.status(403).json("Token is not valid!");
-            }
-
-            req.user = user;
-            next()
-        });
-
-    } else {
-        res.status(401).json("You are not authenticated!");
+const verifyToken = (token) => {
+    console.log(token, 'token')
+    if (!token) {
+        throw new Error("Invalid token!");
     }
 
-    // const token = authHeader && authHeader.split(' ')[1];
-
-    // if (token == null) return res.sendStatus(401);
-    // jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    //     // if (err) return res.sendStatus(403);
-    //     console.log(err)
-    //     if (err) return res.status(403).json("có lỗi");
-    //     req.email = decoded.email;
-    //     next();
-    // })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        // console.log(decoded, 'decoded') { iat: 1680533726, exp: 1680535526 }
+        return decoded;
+    } catch (err) {
+        throw new Error("Token is not valid!");
+    }
 }
+
+const authRole = (role_name) => async (req, res, next) => {
+    try {
+        const decoded = await verifyToken(
+            req.headers["authorization"].split(" ")[1]
+        );
+        console.log(decoded, 'decoded')
+
+        /* tìm model role có id role khớp với admin hay không */
+        const role = await db.roles.findByPk(+decoded.role_id);
+
+        /* kiểm tra  */
+        if (role.role_name !== role_name) {
+            throw new Error(`Admin mới có quyền truy cập!`);
+        }
+        req.user = decoded;
+        next();
+
+    } catch (err) {
+        console.log(err);
+        return res.status(401).json({ message: err.message });
+    }
+};
+
+/*  */
+const authAdmin = authRole("admin")
 
 module.exports = {
     verifyToken,
+    authAdmin,
 }

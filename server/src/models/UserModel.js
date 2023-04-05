@@ -114,7 +114,6 @@
 
 
 module.exports = (sequelize, DataTypes) => {
-
     const User = sequelize.define("users", {
         user_id: {
             type: DataTypes.INTEGER,
@@ -134,7 +133,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
     }, {
-        freezeTableName: true
+        freezeTableName: true,
     }
     )
 
