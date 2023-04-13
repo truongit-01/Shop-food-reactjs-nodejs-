@@ -1,0 +1,7 @@
+.backdrop {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(0px);
+    position: absolute;
+    top: 0;
+}

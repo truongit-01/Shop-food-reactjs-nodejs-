@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CardProduct from '../components/CardProduct';
 import Footer from '../components/Footer';
-import './Page.css';
+import '../components/shop/Shop.css';
 
 
 const image = [

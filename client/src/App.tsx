@@ -26,8 +26,9 @@ import BackDropNav from './components/BackDrop/BackDropNav';
 import Login from './page/Login';
 import Blog from './page/Blog';
 import Register from './page/Register';
-import Dashboard from './components/admin/Dashboard';
 import ChefFamous from './page/ChefFamous';
+import MasterLayoutPage from './defaultLayoutPage/MasterLayoutPage';
+import { privateRoute, publicRoute } from './routers/routes';
 
 export interface StateStore {
   userLogin: {
@@ -41,36 +42,36 @@ export interface StateStore {
 }
 
 function App() {
-  const [user, setUser] = useState(true);
-  const getuser = useSelector((state: StateStore) => state.userLogin.userInfo);
-  const { state } = useEth();
+  // const [user, setUser] = useState(true);
+  // const getuser = useSelector((state: StateStore) => state.userLogin.userInfo);
+  // const { state } = useEth();
 
-  useEffect(() => {
-    if (getuser === null && getuser === undefined) {
-      setUser(false);
-    } else {
-      setUser(true);
-    }
-  }, [getuser, user]);
+  // useEffect(() => {
+  //   if (getuser === null && getuser === undefined) {
+  //     setUser(false);
+  //   } else {
+  //     setUser(true);
+  //   }
+  // }, [getuser, user]);
 
 
-  /* xử lý đóng mở thanh menu nav */
-  const [sideDrawerOpen, setSideDrawerOpen] = useState<{}>(false);
+  // /* xử lý đóng mở thanh menu nav */
+  // const [sideDrawerOpen, setSideDrawerOpen] = useState<{}>(false);
 
-  interface Prev {
-    sideDrawerOpen: boolean
-  }
+  // interface Prev {
+  //   sideDrawerOpen: boolean
+  // }
 
-  const handleOpenDrawerToggleClick = () => {
-    console.log(sideDrawerOpen)
-    setSideDrawerOpen((prevState: Prev) => {
-      return { sideDrawerOpen: !prevState.sideDrawerOpen }
-    });
-  }
+  // const handleOpenDrawerToggleClick = () => {
+  //   console.log(sideDrawerOpen)
+  //   setSideDrawerOpen((prevState: Prev) => {
+  //     return { sideDrawerOpen: !prevState.sideDrawerOpen }
+  //   });
+  // }
 
-  const handleCloseDrawerToggleClick = () => {
-    return setSideDrawerOpen(false)
-  }
+  // const handleCloseDrawerToggleClick = () => {
+  //   return setSideDrawerOpen(false)
+  // }
 
 
 
@@ -78,15 +79,64 @@ function App() {
     <AuthContextProvider>
       <div className="App">
         <Router>
-          <NavBar drawerToggleClick={handleOpenDrawerToggleClick} />
+          {/* <NavBar drawerToggleClick={handleOpenDrawerToggleClick} />
           <>
             {sideDrawerOpen ? <SideDrawer /> : null}
             {sideDrawerOpen ? <BackDropNav HandleCloseDrawerToggleClick={handleCloseDrawerToggleClick} /> : null}
-          </>
+          </> */}
 
 
           <Routes>
-            <Route
+            {
+              publicRoute?.map((route, index) => {
+                const Component = route.component;
+                return (
+                  <Route key={index} path={route.path}
+                    element={
+                      <>
+                        {
+                          route.defaultLayout ? (
+                            <MasterLayoutPage>
+                              <Component />
+                            </MasterLayoutPage>
+                          ) : (
+                            <Component />
+                          )
+                        }
+                      </>
+                    }
+                  />
+                )
+              })
+            }
+
+
+            {
+              privateRoute?.map((route, index) => {
+                const Component = route.component;
+                return (
+                  <Route key={index} path={route.path}
+                    element={
+                      <Component/>
+                      // <>
+                      //   {
+                      //     route.defaultLayout ? (
+                      //       <MasterLayoutPage>
+                      //         <Component />
+                      //       </MasterLayoutPage>
+                      //     ) : (
+                      //       <Component />
+                      //     )
+                      //   }
+                      // </>
+                    }
+                  />
+                )
+              })
+            }
+
+
+            {/* <Route
               path="/profile"
               element={<Profile />}
             />
@@ -103,7 +153,7 @@ function App() {
               element={user ? <DetailProduct /> : <Navigate to="/login" />}
             />
             <Route path="*" element={<NotFound />} />
-            <Route path="/test-blockhain" element={<Testblockchain />} />
+            <Route path="/test-blockhain" element={<Testblockchain />} /> */}
           </Routes>
         </Router>
       </div>

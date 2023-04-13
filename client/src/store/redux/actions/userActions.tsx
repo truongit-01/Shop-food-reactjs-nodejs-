@@ -30,6 +30,7 @@ export function login(email?: string, password?: string) {
                         "Content-Type": "application/json",
                     },
                 };
+                
                 // call api
                 const { data } = await axios.post(`http://localhost:8080/api/v1/login`, {
                     email, password

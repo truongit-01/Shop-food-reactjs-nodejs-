@@ -7,6 +7,7 @@ import "../../node_modules/slick-carousel/slick/slick.css";
 import "../../node_modules/slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import ButtonMore from "../components/ButtonMore";
+import MasterLayoutPage from "../defaultLayoutPage/MasterLayoutPage";
 
 export default function Home() {
   var settings = {
@@ -68,85 +69,85 @@ export default function Home() {
   ]
 
   return (
-    <div>
-      <div className="wrap_home">
-        <img className="main_img" src="https://images.squarespace-cdn.com/content/v1/53883795e4b016c956b8d243/1551438228969-H0FPV1FO3W5B0QL328AS/chup-anh-thuc-an-1.jpg" alt="main-img" />
+    <>
+      <MasterLayoutPage>
+        <div className="wrap_home">
+          <img className="main_img" src="https://images.squarespace-cdn.com/content/v1/53883795e4b016c956b8d243/1551438228969-H0FPV1FO3W5B0QL328AS/chup-anh-thuc-an-1.jpg" alt="main-img" />
 
-        <div className="backdrop">
-          {/* header home */}
-          <HeaderHome />
+          <div className="backdrop">
+            <HeaderHome />
 
-          {/*  */}
-          <ul className="box_introduce">
-            <li className="first" >
-              <h1>About the restaurant</h1>
-              <p>
-                "Mamuka" là một nhà hàng gia đình kiểu Georgia được tạo ra theo truyền thống hiếu khách tốt nhất của miền Nam. Chúng tôi đã cố gắng kết hợp phong cách tinh tế, hương vị phong phú của Gruzia và mức độ tiện nghi hiện đại. Và khi thức ăn ngon được kết hợp với dịch vụ chất lượng, bạn sẽ có được một nhà hàng mà bạn muốn quay lại lần nữa.
-              </p>
-              <p className="btn_more"><b>More about us</b></p>
-            </li>
-            <li className="second">
-              <iframe src="//player.vimeo.com/video/231571928?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1" title="YouTube video player" frameBorder={0} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-            </li>
-          </ul>
+            {/*  */}
+            <ul className="box_introduce">
+              <li className="first" >
+                <h1>About the restaurant</h1>
+                <p>
+                  "Mamuka" là một nhà hàng gia đình kiểu Georgia được tạo ra theo truyền thống hiếu khách tốt nhất của miền Nam. Chúng tôi đã cố gắng kết hợp phong cách tinh tế, hương vị phong phú của Gruzia và mức độ tiện nghi hiện đại. Và khi thức ăn ngon được kết hợp với dịch vụ chất lượng, bạn sẽ có được một nhà hàng mà bạn muốn quay lại lần nữa.
+                </p>
+                <p className="btn_more"><b>More about us</b></p>
+              </li>
+              <li className="second">
+                <iframe src="//player.vimeo.com/video/231571928?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1" title="YouTube video player" frameBorder={0} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              </li>
+            </ul>
 
-          {/* Chef Famous */}
-          <div className="wrapp__chefFamous-home">
-            <h2 > Đầu Bếp Hàng Đầu</h2>
-            <Slider {...settings}>
-              {data.map((data) => (
-                <>
-                  <Link to="/chef-famous-detail">
-                    <img style={{ width: "90%", height: "265px", margin: 'auto', borderRadius: '18px' }} src={data.src} />
-                  </Link>
+            {/* Chef Famous */}
+            <div className="wrapp__chefFamous-home">
+              <h2 > Đầu Bếp Hàng Đầu</h2>
+              <Slider {...settings}>
+                {data.map((data) => (
+                  <>
+                    <Link to="/chef-famous-detail">
+                      <img style={{ width: "90%", height: "265px", margin: 'auto', borderRadius: '18px' }} src={data.src} />
+                    </Link>
 
-                </>
-              ))}
-            </Slider>
+                  </>
+                ))}
+              </Slider>
 
-            <div style={{ marginTop: '30px' }}>
-              <Link to="/chef-famous">
-                {/* <ButtonMore /> */}
-              </Link>
-            </div>
-          </div>
-
-          <div style={{ marginTop: '140px', display: 'flex', flexWrap: 'wrap', paddingTop: '20px', width: '90%', margin: 'auto', borderTop: '2px solid #BF014B' }}>
-            <div style={{ width: '32%', paddingRight: '20px' }}>
-              <div className="ccc">
-                <div className="items">
-                  <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/cd0/600_600_1/cd01de56a7be73e3f5eb5a9be475fc18.jpg" />
-                </div>
-                <div className="items">
-                  <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/d25/600_600_1/d259804b9a895cf765e9ef22ac95e80b.jpg" />
-                </div>
-                <div className="items">
-                  <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/34f/600_600_1/34f2543d35ddbfb4ed1dfcfdf57eba96.jpg" />
-                </div>
-                <div className="items">
-                  <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/cd0/600_600_1/cd01de56a7be73e3f5eb5a9be475fc18.jpg" />
-                </div>
+              <div style={{ marginTop: '30px' }}>
+                <Link to="/chef-famous">
+                  {/* <ButtonMore /> */}
+                </Link>
               </div>
             </div>
 
-            <div style={{ width: '68%' }}>
-              <ul className="box_introduce2">
-                <li className="first" >
-                  <h1>About the restaurant</h1>
+            <div style={{ marginTop: '140px', display: 'flex', flexWrap: 'wrap', paddingTop: '20px', width: '90%', margin: 'auto', borderTop: '2px solid #BF014B' }}>
+              <div style={{ width: '32%', paddingRight: '20px' }}>
+                <div className="ccc">
+                  <div className="items">
+                    <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/cd0/600_600_1/cd01de56a7be73e3f5eb5a9be475fc18.jpg" />
+                  </div>
+                  <div className="items">
+                    <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/d25/600_600_1/d259804b9a895cf765e9ef22ac95e80b.jpg" />
+                  </div>
+                  <div className="items">
+                    <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/34f/600_600_1/34f2543d35ddbfb4ed1dfcfdf57eba96.jpg" />
+                  </div>
+                  <div className="items">
+                    <img style={{ width: '100%', borderRadius: '5px' }} src="https://mamuka.rest/upload/resize_cache/iblock/cd0/600_600_1/cd01de56a7be73e3f5eb5a9be475fc18.jpg" />
+                  </div>
+                </div>
+              </div>
 
-                  <p>
-                    "Mamuka" là một nhà hàng gia đình kiểu Georgia được tạo ra theo truyền thống hiếu khách tốt nhất của miền Nam. Chúng tôi đã cố gắng kết hợp phong cách tinh tế, hương vị phong phú của Gruzia và mức độ tiện nghi hiện đại. Và khi thức ăn ngon được kết hợp với dịch vụ chất lượng, bạn sẽ có được một nhà hàng mà bạn muốn quay lại lần nữa.
-                  </p>
+              <div style={{ width: '68%' }}>
+                <ul className="box_introduce2">
+                  <li className="first" >
+                    <h1>About the restaurant</h1>
 
-                  <p className="btn_more"><b>More about us</b></p>
-                </li>
-              </ul>
+                    <p>
+                      "Mamuka" là một nhà hàng gia đình kiểu Georgia được tạo ra theo truyền thống hiếu khách tốt nhất của miền Nam. Chúng tôi đã cố gắng kết hợp phong cách tinh tế, hương vị phong phú của Gruzia và mức độ tiện nghi hiện đại. Và khi thức ăn ngon được kết hợp với dịch vụ chất lượng, bạn sẽ có được một nhà hàng mà bạn muốn quay lại lần nữa.
+                    </p>
+
+                    <p className="btn_more"><b>More about us</b></p>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
 
 
 
-          {/* <div style={{ marginTop: '140px', display: 'flex', background: '', width: '90%', margin: 'auto', borderTop: '2px solid #BF014B' }}>
+            {/* <div style={{ marginTop: '140px', display: 'flex', background: '', width: '90%', margin: 'auto', borderTop: '2px solid #BF014B' }}>
             <div style={{ width: '100%' }}>
               <ul className="box_introduce2">
                 <li className="first" >
@@ -170,9 +171,11 @@ export default function Home() {
             </div>
 
           </div> */}
-          <Footer />
+            <Footer />
+          </div>
         </div>
-      </div>
-    </div>
+      </MasterLayoutPage>
+
+    </>
   );
 }

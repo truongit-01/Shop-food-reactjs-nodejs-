@@ -2,6 +2,12 @@
     margin: 0;
     padding: 0;
 }
+*, ::before, ::after {
+    box-sizing: content-box !important;
+}
+*, p {
+    margin-bottom: 0px;
+}
 .link {
     color: #fff;
     text-decoration: none;
@@ -48,7 +54,7 @@
     position: relative;
 }
 .wrap_form .title {
-      text-align: center;
+    text-align: center;
 }
 .content form .user-details{
     display: flex;
